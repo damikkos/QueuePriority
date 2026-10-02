@@ -1,4 +1,5 @@
 /build/
+/tests/
 /.vs/
 /.idea/
 /CMakeUserPresets.json

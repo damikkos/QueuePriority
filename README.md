@@ -54,7 +54,6 @@ mods/
 
 ```bat
 build.cmd
-build\rules_test.exe
 ```
 
 Готовая DLL появится в `build/QueuePriority.grafted.dll`. Путь к KR_GRAFTED можно изменить параметром CMake `QUEUE_PRIORITY_GRAFT_DIR`.

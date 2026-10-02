@@ -16,6 +16,3 @@ graft_plugin(queue_priority
     VERSION 1
     SOURCES src/plugin.cpp)
 target_compile_definitions(queue_priority PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
-
-add_executable(rules_test tests/rules_test.cpp)
-target_include_directories(rules_test PRIVATE src)
