@@ -20,7 +20,7 @@
 #include "graft/scan.hpp"
 #include "rules.hpp"
 
-GRAFT_PLUGIN("QueuePriority", 1);
+GRAFT_PLUGIN("QueuePriority", 2);
 
 namespace
 {
@@ -199,7 +199,7 @@ namespace
                 {
                     return std::nullopt;
                 }
-                result = hit;
+                result = *hit;
             }
         }
         return result;
@@ -271,8 +271,8 @@ namespace
         return true;
     }
 
-    GRAFT_ON_TICK(dt)
+    GRAFT_ON_LOAD()
     {
-        [[maybe_unused]] static const bool installed = Install();
+        Install();
     }
 }
