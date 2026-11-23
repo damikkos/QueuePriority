@@ -1,8 +1,8 @@
-# QueuePriority v1.1 - админский приоритет
+# QueuePriority v1.2 - админский приоритет
 
-QueuePriority добавляет админский приоритет и резервные слоты на сервер DayZ 1.29. Админский приоритет получают игроки, чьи SteamID указаны в `QueuePriority.ini`.
+QueuePriority добавляет админский приоритет и резервные слоты на сервер DayZ 1.30. Админский приоритет получают игроки, чьи SteamID указаны в `QueuePriority.ini`.
 
-Для работы нужен [KR_GRAFTED v0.4.0](https://github.com/KRdayzmodding/KR_GRAFTED/releases/tag/v0.4.0).
+Для работы нужен [KR_GRAFTED v0.6.0](https://github.com/KRdayzmodding/KR_GRAFTED/releases/tag/v0.6.0).
 
 ## Админский приоритет и очередь
 
@@ -42,7 +42,7 @@ SteamID=
 
 ## Сборка
 
-Для сборки нужны Windows x64, Visual Studio 2022 с C++ Clang tools, CMake версии 3.30 или новее и Ninja. Положите исходники KR_GRAFTED v0.4.0 рядом с папкой QueuePriority:
+Для сборки нужны Windows x64, Visual Studio 2022 с C++ Clang tools, CMake версии 3.30 или новее и Ninja. Положите исходники KR_GRAFTED v0.6.0 рядом с папкой QueuePriority:
 
 ```text
 mods/
@@ -60,6 +60,6 @@ build.cmd
 
 ## Совместимость и журнал
 
-Плагин проверен на DayZ Server 1.29.163709. Если он не распознаёт версию движка, то не меняет работу сервера и записывает причину в журнал.
+Плагин проверен на DayZ Server 1.30.164289. Если он не распознаёт версию движка, то не меняет работу сервера и записывает причину в журнал.
 
 Ищите сообщения с `[QueuePriority]` в файлах `graft_*.log` в папке профиля сервера.

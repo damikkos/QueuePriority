@@ -20,7 +20,7 @@
 #include "graft/scan.hpp"
 #include "rules.hpp"
 
-GRAFT_PLUGIN("QueuePriority", 2);
+GRAFT_PLUGIN("QueuePriority", 3);
 
 namespace
 {
@@ -216,13 +216,14 @@ namespace
     {
         Reload();
         const std::vector<graft::scan::view> sections = graft::scan::sections_of(GetModuleHandleW(nullptr));
-        const auto add = Unique(sections, graft::scan::sig<"4C 89 4C 24 ?? 89 54 24 ?? 55 53 56 57 41 54 41 55 41 56 41 57 48 8D 6C 24 ?? 48 81 EC ?? ?? ?? ?? 4C 8B E9 49 8B F9 B9 40 01 00 00 4D 8B E0 8B DA">);
-        const auto process = Unique(sections, graft::scan::sig<"48 89 5C 24 20 55 48 83 EC 20 8B 69 34 48 8B D9 48 8B 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B 03 48 8B CB FF 50 08 85 ED 0F 84 ?? ?? ?? ?? 48 89 74 24 30 48 89 7C 24 38 8B 7B 3C 4C 89 74 24 40 85 FF 7F 05 44 8B F5 EB 16 48 8B CB E8 ?? ?? ?? ?? 2B F8 48 8B CB E8 ?? ?? ?? ?? 44 8D 34 07 48 8B 73 20 48 8B CE E8 ?? ?? ?? ?? BF 01 00 00 00 48 8B CE 2B F8 E8 ?? ?? ?? ?? 48 8B 74 24 30 03 F8 85 ED 7E ?? 44 3B F7 41 0F 4E FE 0F 1F 44 00 00 85 FF 7E ?? 48 8B 53 28 48 8B CB 48 8B 12 E8 ?? ?? ?? ?? 48 8B 43 28 48 8B 08 8B 11">);
-        const auto destroy = Unique(sections, graft::scan::sig<"40 55 53 41 56 48 8D 6C 24 ?? 48 81 EC ?? ?? ?? ?? 44 8B F2 48 8B D9 83 FA 02 75 ??">);
-        const auto steam = Unique(sections, graft::scan::sig<"49 8B 4D 08 48 8B 18 48 8B 3B E8 [disp32] 8B D0 48 8B CB FF 57 60">);
-        const auto layout = Unique(sections, graft::scan::sig<"44 8B 41 34 33 C0 45 85 C0 74 ?? 4C 8B 49 28 90 49 8B 14 C1 80 BA AE 00 00 00 00 74 ?? FF C0 41 3B C0 72 ?? 41 8B C0 C3">);
-        const std::uintptr_t maxPlayers = process ? CallTarget(process->site + 0x74) : 0;
-        const std::uintptr_t onlinePlayers = process ? CallTarget(process->site + 0x65) : 0;
+        // Signatures and call offsets below are from DayZServer 1.30.164289.
+        const auto add = Unique(sections, graft::scan::sig<"4C 89 4C 24 ?? 89 54 24 ?? 55 53 56 57 41 54 41 55 41 56 41 57 48 8D 6C 24 ?? 48 81 EC ?? ?? ?? ?? 48 C7 45 ?? FE FF FF FF 49 8B F9 4D 8B E8 8B DA 4C 8B F9 B9 40 01 00 00">);
+        const auto process = Unique(sections, graft::scan::sig<"48 89 5C 24 20 55 48 83 EC 20 8B 69 34 48 8B D9 48 8B 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B 03 48 8B CB FF 50 08 85 ED 0F 84 ?? ?? ?? ?? 83 7B 3C 00 48 89 74 24 30 48 89 7C 24 38 4C 89 74 24 40 7F 05 44 8B F5 EB 13 48 8B CB E8 ?? ?? ?? ?? 44 8B 73 3C 44 2B 73 14 44 03 F0 48 8B 73 20 48 8B CE E8 ?? ?? ?? ?? BF 01 00 00 00 48 8B CE 2B F8 E8 ?? ?? ?? ?? 03 F8 85 ED 7E ?? 44 3B F7 41 0F 4E FE 85 FF 7E ?? 48 8B 53 28 48 8B CB 48 8B 12 E8 ?? ?? ?? ?? 48 8B 43 28">);
+        const auto destroy = Unique(sections, graft::scan::sig<"40 55 56 57 41 54 41 55 41 56 41 57 48 8D 6C 24 ?? 48 81 EC ?? ?? ?? ?? 48 C7 45 ?? FE FF FF FF 48 89 9C 24 ?? ?? ?? ?? 8B DA 48 8B F9 83 FA 02 75 ??">);
+        const auto steam = Unique(sections, graft::scan::sig<"48 8B 18 48 8B 3B 49 8B 4E 08 E8 [disp32] 8B D0 48 8B CB FF 57 60">);
+        const auto layout = Unique(sections, graft::scan::sig<"45 8B 47 34 45 85 C0 74 ?? 49 8B 57 28 0F 1F 84 00 00 00 00 00 8B C3 48 8B 0C C2 80 B9 AE 00 00 00 00 74 ?? FF C3 41 3B D8 72 ?? 41 8B D8">);
+        const std::uintptr_t maxPlayers = process ? CallTarget(process->site + 0x70) : 0;
+        const std::uintptr_t onlinePlayers = process ? CallTarget(process->site + 0x61) : 0;
         std::string missing;
         if (!add)
         {
@@ -258,7 +259,7 @@ namespace
             return false;
         }
         g_OnlinePlayers = reinterpret_cast<CountFn>(onlinePlayers);
-        g_ProcessReturn = reinterpret_cast<const void*>(process->site + 0x79);
+        g_ProcessReturn = reinterpret_cast<const void*>(process->site + 0x75);
         g_SteamReturn = reinterpret_cast<const void*>(steam->site + 15);
         if (!graft::hook_all({graft::hooked(reinterpret_cast<AddFn>(add->site), &OnAdd, &g_Add),
                               graft::hooked(reinterpret_cast<ProcessFn>(process->site), &OnProcess, &g_Process),
